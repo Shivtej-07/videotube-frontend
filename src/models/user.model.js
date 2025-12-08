@@ -40,7 +40,8 @@ const userSchema = new Schema(
         ],
         copyrightStrikes: {
             type: Number,
-            default: 0
+            default: 0,
+            select: false
         },
         password: {
             type: String,

@@ -110,7 +110,7 @@ const deleteVideoForCopyright = asyncHandler(async (req, res) => {
     await Comment.deleteMany({ video: videoId });
 
     // Add strike to user
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("+copyrightStrikes");
     if (user) {
         user.copyrightStrikes = (user.copyrightStrikes || 0) + 1;
         await user.save({ validateBeforeSave: false });
@@ -162,10 +162,59 @@ const getVideosByUserId = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { videos, totalVideos, page: options.page, limit: options.limit }, "User videos fetched successfully"));
 })
 
+const deleteUser = asyncHandler(async (req, res) => {
+    // Delete user
+    const { userId } = req.params;
+
+    if (!mongoose.isValidObjectId(userId)) {
+        throw new ApiError(400, "Invalid user ID");
+    }
+
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    // Cleanup related data
+    await Video.deleteMany({ owner: userId });
+    await Like.deleteMany({ likedBy: userId });
+    await Comment.deleteMany({ owner: userId });
+    await Subscription.deleteMany({ subscriber: userId });
+    await Subscription.deleteMany({ channel: userId });
+    await Tweet.deleteMany({ owner: userId });
+
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "User deleted successfully"));
+})
+
+const getUserById = asyncHandler(async (req, res) => {
+    // Get user details
+    const { userId } = req.params;
+
+    if (!mongoose.isValidObjectId(userId)) {
+        throw new ApiError(400, "Invalid user ID");
+    }
+
+    const user = await User.findById(userId).select("+copyrightStrikes +refreshToken +password");
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "User details fetched successfully"));
+})
+
 export {
     getSystemStats,
     getAllUsers,
     deleteAnyVideo,
     deleteVideoForCopyright,
-    getVideosByUserId
+    getVideosByUserId,
+    deleteUser,
+    getUserById
 }

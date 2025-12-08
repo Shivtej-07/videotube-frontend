@@ -1,9 +1,12 @@
+
 import { Router } from 'express';
 import {
     deleteAnyVideo,
     deleteVideoForCopyright,
     getAllUsers,
     getVideosByUserId,
+    deleteUser,
+    getUserById,
     getSystemStats,
 } from "../controllers/admin.controller.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js"
@@ -19,5 +22,6 @@ router.route("/users").get(getAllUsers);
 router.route("/video/:videoId").delete(deleteAnyVideo);
 router.route("/video/copyright/:videoId").delete(deleteVideoForCopyright);
 router.route("/videos/:userId").get(getVideosByUserId);
+router.route("/users/:userId").get(getUserById).delete(deleteUser);
 
 export default router;
