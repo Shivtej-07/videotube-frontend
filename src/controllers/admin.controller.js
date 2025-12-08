@@ -121,9 +121,51 @@ const deleteVideoForCopyright = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { copyrightStrikes: user ? user.copyrightStrikes : 0 }, "Video deleted for copyright violation, strike added to user"));
 })
 
+const getVideosByUserId = asyncHandler(async (req, res) => {
+    // Get all videos by user ID
+    const { userId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    if (!mongoose.isValidObjectId(userId)) {
+        throw new ApiError(400, "Invalid user ID");
+    }
+
+    const options = {
+        page: parseInt(page, 10),
+        limit: parseInt(limit, 10),
+        sort: { createdAt: -1 }
+    };
+
+    const videos = await Video.aggregate([
+        {
+            $match: {
+                owner: new mongoose.Types.ObjectId(userId)
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
+            $skip: (options.page - 1) * options.limit
+        },
+        {
+            $limit: options.limit
+        }
+    ]);
+
+    const totalVideos = await Video.countDocuments({ owner: userId });
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, { videos, totalVideos, page: options.page, limit: options.limit }, "User videos fetched successfully"));
+})
+
 export {
     getSystemStats,
     getAllUsers,
     deleteAnyVideo,
-    deleteVideoForCopyright
+    deleteVideoForCopyright,
+    getVideosByUserId
 }

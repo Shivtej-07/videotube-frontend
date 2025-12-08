@@ -3,6 +3,7 @@ import {
     deleteAnyVideo,
     deleteVideoForCopyright,
     getAllUsers,
+    getVideosByUserId,
     getSystemStats,
 } from "../controllers/admin.controller.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js"
@@ -17,5 +18,6 @@ router.route("/stats").get(getSystemStats);
 router.route("/users").get(getAllUsers);
 router.route("/video/:videoId").delete(deleteAnyVideo);
 router.route("/video/copyright/:videoId").delete(deleteVideoForCopyright);
+router.route("/videos/:userId").get(getVideosByUserId);
 
 export default router;
