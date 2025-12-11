@@ -47,7 +47,11 @@ export const getAllVideos = asyncHandler(async (req, res) => {
 
     // Sorting
     const sort = {};
-    sort[sortBy] = sortType === "asc" ? 1 : -1;
+    if (sortBy === 'views') {
+        sort['views'] = sortType === 'asc' ? 1 : -1;
+    } else {
+        sort[sortBy] = sortType === 'asc' ? 1 : -1;
+    }
 
     // Aggregation Pipeline
     const pipeline = [

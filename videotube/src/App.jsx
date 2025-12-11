@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminUserDetail from './pages/AdminUserDetail';
 import PublishVideo from './pages/PublishVideo';
 import VideoDetail from './pages/VideoDetail';
 import ErrorPage from './pages/ErrorPage';
@@ -18,6 +19,12 @@ import Playlists from './pages/Playlists';
 import PlaylistDetail from './pages/PlaylistDetail';
 import Subscriptions from './pages/Subscriptions';
 import Shorts from './pages/Shorts';
+import Trending from './pages/Trending';
+import Library from './pages/Library';
+import WatchLater from './pages/WatchLater';
+import Downloads from './pages/Downloads';
+import Channel from './pages/Channel';
+import Studio from './pages/Studio';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "admin",
         element: <AdminDashboard />
+      },
+      {
+        path: "admin/user/:userId",
+        element: <AdminUserDetail />
       },
       {
         path: "publish",
@@ -84,6 +95,34 @@ const router = createBrowserRouter([
       {
         path: "shorts",
         element: <Shorts />
+      },
+      {
+        path: "trending",
+        element: <Trending />
+      },
+      {
+        path: "library",
+        element: <Library />
+      },
+      {
+        path: "watch-later",
+        element: <WatchLater />
+      },
+      {
+        path: "downloads",
+        element: <Downloads />
+      },
+      {
+        path: "your-channel",
+        element: <Channel />
+      },
+      {
+        path: "channel/:username",
+        element: <Channel />
+      },
+      {
+        path: "studio",
+        element: <Studio />
       }
     ]
   }
