@@ -14,6 +14,7 @@ function Sidebar() {
 
     const sidebarItems = [
         { path: '/', icon: '🏠', label: 'Home' },
+        { path: '/shorts', icon: '⚡', label: 'Shorts' },
         { path: '/trending', icon: '🔥', label: 'Trending' },
         { path: '/subscriptions', icon: '📺', label: 'Subscriptions' },
         { path: '/library', icon: '📚', label: 'Library' },

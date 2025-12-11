@@ -38,12 +38,22 @@ export const getAllVideos = asyncHandler(async (req, res) => {
         filter.owner = userId;
     }
 
+    // 🩳 Filter by Shorts (duration <= 60 seconds)
+    if (req.query.isShorts === "true") {
+        filter.duration = { $lte: 60 };
+    } else if (req.query.isShorts === "false") {
+        filter.duration = { $gt: 60 };
+    }
+
     // Sorting
     const sort = {};
     sort[sortBy] = sortType === "asc" ? 1 : -1;
 
     // Pagination
     const skip = (pageNumber - 1) * limitNumber;
+
+    console.log("getAllVideos Query Params:", req.query); // Debug
+    console.log("getAllVideos Filter:", filter); // Debug
 
     // Fetch videos
     const videos = await Video
@@ -97,6 +107,8 @@ export const publishAVideo = asyncHandler(async (req, res) => {
     // Upload to Cloudinary
     const video = await uploadOnCloudinary(videoLocalPath);
     const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+
+    console.log("Cloudinary Video Response:", video); // Debugging log
 
     if (!video || !thumbnail) {
         throw new ApiError(500, "Cloudinary upload failed");

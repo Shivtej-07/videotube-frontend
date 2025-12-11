@@ -16,6 +16,8 @@ import EditVideo from './pages/EditVideo';
 import Search from './pages/Search';
 import Playlists from './pages/Playlists';
 import PlaylistDetail from './pages/PlaylistDetail';
+import Subscriptions from './pages/Subscriptions';
+import Shorts from './pages/Shorts';
 
 const router = createBrowserRouter([
   {
@@ -74,6 +76,14 @@ const router = createBrowserRouter([
       {
         path: "playlist/:playlistId",
         element: <PlaylistDetail />
+      },
+      {
+        path: "subscriptions",
+        element: <Subscriptions />
+      },
+      {
+        path: "shorts",
+        element: <Shorts />
       }
     ]
   }
