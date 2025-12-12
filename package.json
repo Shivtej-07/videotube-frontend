@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "start": "node --experimental-json-modules src/index.js"
   },
   "keywords": [
     "javascript",
@@ -30,6 +31,7 @@
     "mongoose": "^8.19.3",
     "mongoose-aggregate-paginate-v2": "^1.1.4",
     "multer": "^2.0.2",
-    "next-cloudinary": "^6.17.4"
+    "next-cloudinary": "^6.17.4",
+    "nodemailer": "^7.0.11"
   }
 }

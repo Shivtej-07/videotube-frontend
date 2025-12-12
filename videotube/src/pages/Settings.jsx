@@ -30,7 +30,7 @@ function Settings() {
             setMessage({ type: 'success', text: `${type === 'avatar' ? 'Avatar' : 'Cover image'} updated successfully!` });
         } catch (error) {
             console.error('Update failed:', error);
-            setMessage({ type: 'error', text: 'Failed to update image.' });
+            setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to update image.' });
         } finally {
             setUploading(false);
         }
