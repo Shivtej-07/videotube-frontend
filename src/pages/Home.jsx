@@ -93,8 +93,8 @@ function Home() {
                                 key={category}
                                 onClick={() => setSelectedCategory(category)}
                                 className={`px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 active:scale-95 ${selectedCategory === category
-                                    ? 'bg-white text-black'
-                                    : 'bg-gray-900 hover:bg-gray-800 text-gray-300'
+                                        ? 'bg-white text-black'
+                                        : 'bg-gray-900 hover:bg-gray-800 text-gray-300'
                                     }`}
                             >
                                 {category}
