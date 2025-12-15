@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-color: #0f0f0f;
+  --header-bg: #0f0f0f;
+  --sidebar-bg: #0f0f0f;
+  --content-bg: #0f0f0f;
+
+  --text-main: #f1f1f1;
+  --text-secondary: #aaaaaa;
+
+  --hover-bg: #272727;
+  --border-color: #303030;
+
+  --primary-color: #3ea6ff;
+  --primary-btn-bg: #272727;
+
+  --font-family: 'Roboto', 'Arial', sans-serif;
+
+  --nav-height: 56px;
+  --sidebar-width: 240px;
+  --sidebar-width-collapsed: 72px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #717171;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+
+/* Layout helpers */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  margin-top: var(--nav-height);
+  height: calc(100vh - var(--nav-height));
+}
+
+.sidebar-wrapper {
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg);
+  overflow-y: auto;
+  position: fixed;
+  top: var(--nav-height);
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+  /* transition: width 0.2s; */
+  /* Optional animation */
+}
+
+/* When we implement collapsible later */
+.sidebar-wrapper.collapsed {
+  width: var(--sidebar-width-collapsed);
+}
+
+.content-wrapper {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: 24px;
+  background-color: var(--bg-color);
+  overflow-y: auto;
+}
+
+
+/* Navbar Specifics overrides */
+.navbar {
+  height: var(--nav-height);
+  padding: 0 16px;
+  background-color: var(--header-bg);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  border-bottom: none;
+  /* YouTube doesn't have a border usually */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Button overrides */
+.btn-icon {
+  background: none;
+  border: none;
+  color: var(--text-main);
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background-color: var(--hover-bg);
+}
+
+/* Search Bar */
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  flex: 0 1 700px;
+  margin: 0 40px;
+}
+
+.search-input-wrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  background-color: #121212;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 40px 0 0 40px;
+  outline: none;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: #1c62b9;
+  margin-left: 0;
+  /* Prevents jumping */
+}
+
+.search-btn {
+  background-color: #222;
+  border: 1px solid var(--border-color);
+  border-left: none;
+  height: 40px;
+  width: 64px;
+  border-radius: 0 40px 40px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn:hover {
+  background-color: #303030;
+}
+
+/* Icons replacement (using simple chars or generic classes if assets missing) */
+.material-icons {
+  /* If importing a font, else uses generic fallback */
+  font-family: sans-serif;
+}
+
+
+/* Common Utils */
+.text-center {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
