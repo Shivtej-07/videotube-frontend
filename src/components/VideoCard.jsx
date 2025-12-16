@@ -37,9 +37,9 @@ function VideoCard({ video }) {
     return (
         <Link
             to={`/video/${video._id}`}
-            className="group block no-underline"
+            className="group block no-underline mb-4 sm:mb-0"
         >
-            <div className="relative aspect-video overflow-hidden rounded-xl bg-gray-800 mb-3">
+            <div className="relative aspect-video overflow-hidden sm:rounded-xl bg-gray-800 mb-3">
                 <img
                     src={video.thumbnail}
                     alt={video.title}
@@ -50,32 +50,38 @@ function VideoCard({ video }) {
                 </span>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 px-3 sm:px-0">
                 <div className="flex-shrink-0">
                     {video.owner?.avatar ? (
                         <img
                             src={video.owner.avatar}
                             alt={video.owner.username}
-                            className="w-9 h-9 rounded-full object-cover"
+                            className="w-10 h-10 rounded-full object-cover"
                         />
                     ) : (
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
                             {video.owner?.username?.[0]?.toUpperCase() || 'C'}
                         </div>
                     )}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white group-hover:text-red-400 transition-colors line-clamp-2 mb-1">
+                    <h3 className="font-semibold text-white group-hover:text-red-400 transition-colors line-clamp-2 leading-tight mb-1">
                         {video.title}
                     </h3>
-                    <div className="text-sm text-gray-400 truncate">
-                        {video.owner?.username || "Unknown Channel"}
+                    <div className="text-sm text-gray-400 flex items-center gap-1">
+                        <span>{video.owner?.username || "Unknown Channel"}</span>
+                        {/* Optional verified badge could go here */}
                     </div>
                     <div className="text-sm text-gray-400">
                         {formatViewCount(video.views)} views • {formatTimeAgo(video.createdAt)}
                     </div>
                 </div>
+
+                {/* Mobile menu vertical dots placeholder (visual only for now) */}
+                <button className="sm:hidden text-gray-300 self-start px-1" onClick={(e) => e.preventDefault()}>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+                </button>
             </div>
         </Link>
     );
