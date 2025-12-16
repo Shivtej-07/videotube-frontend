@@ -67,7 +67,7 @@ function Sidebar() {
     }
 
     return (
-        <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-gray-900 border-r border-gray-800 overflow-y-auto">
+        <aside className="hidden sm:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-gray-900 border-r border-gray-800 overflow-y-auto">
             {/* Collapse Button */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
                 <span className="text-gray-300 font-medium">Menu</span>

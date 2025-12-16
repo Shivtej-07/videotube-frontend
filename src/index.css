@@ -52,47 +52,6 @@ body {
 }
 
 
-/* Layout helpers */
-.app-layout {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.main-container {
-  display: flex;
-  flex: 1;
-  margin-top: var(--nav-height);
-  height: calc(100vh - var(--nav-height));
-}
-
-.sidebar-wrapper {
-  width: var(--sidebar-width);
-  background-color: var(--sidebar-bg);
-  overflow-y: auto;
-  position: fixed;
-  top: var(--nav-height);
-  bottom: 0;
-  left: 0;
-  z-index: 50;
-  /* transition: width 0.2s; */
-  /* Optional animation */
-}
-
-/* When we implement collapsible later */
-.sidebar-wrapper.collapsed {
-  width: var(--sidebar-width-collapsed);
-}
-
-.content-wrapper {
-  flex: 1;
-  margin-left: var(--sidebar-width);
-  padding: 24px;
-  background-color: var(--bg-color);
-  overflow-y: auto;
-}
-
-
 /* Navbar Specifics overrides */
 .navbar {
   height: var(--nav-height);
@@ -108,6 +67,63 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+/* Layout helpers */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  margin-top: var(--nav-height);
+  /* height: calc(100vh - var(--nav-height)); */
+}
+
+/* Sidebar wrapper - hidden on mobile via CSS/JS logic typically, but here we handle spacing */
+.sidebar-wrapper {
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg);
+  overflow-y: auto;
+  position: fixed;
+  top: var(--nav-height);
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+  display: none;
+  /* Default hidden on mobile */
+}
+
+@media (min-width: 640px) {
+  .sidebar-wrapper {
+    display: block;
+  }
+}
+
+/* Content wrapper - responsive spacing */
+.content-wrapper {
+  flex: 1;
+  background-color: var(--bg-color);
+  overflow-y: auto;
+
+  /* Mobile default: No margin, no padding (handled by components), space for bottom nav */
+  margin-left: 0;
+  padding: 0;
+  padding-bottom: 60px;
+  /* Space for bottom nav */
+  min-height: calc(100vh - var(--nav-height));
+}
+
+/* Desktop override: restore sidebar margin and padding */
+@media (min-width: 640px) {
+  .content-wrapper {
+    margin-left: var(--sidebar-width);
+    padding: 24px;
+    padding-bottom: 24px;
+  }
 }
 
 /* Button overrides */
