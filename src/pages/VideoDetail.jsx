@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import '../index.css';
 import CommentList from '../components/CommentList';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
+import VideoListCard from '../components/VideoListCard';
 
 function VideoDetail() {
     const { videoId } = useParams();
@@ -13,6 +14,7 @@ function VideoDetail() {
     const [video, setVideo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [recommendations, setRecommendations] = useState([]);
 
     // Social State
     const [isLiked, setIsLiked] = useState(false);
@@ -44,7 +46,6 @@ function VideoDetail() {
                 // Subscription status also comes from backend now
                 setIsSubscribed(videoData.isSubscribed || false);
 
-                // Fetch real subscriber count separately (as it's channel level)
                 if (videoData?.owner?._id) {
                     try {
                         const subResponse = await api.get(`/subscriptions/c/${videoData.owner._id}`);
@@ -54,6 +55,16 @@ function VideoDetail() {
                         console.warn("Could not fetch subs count:", subErr);
                         setSubscriberCount(getFallbackCount(videoData.owner._id));
                     }
+                }
+
+                // Fetch Recommendations (Simple logic: fetch recent videos, exclude current)
+                try {
+                    const recResponse = await api.get('/videos?limit=10');
+                    const allVideos = recResponse.data.data?.videos || [];
+                    const filteredRecs = allVideos.filter(v => v._id !== videoId);
+                    setRecommendations(filteredRecs);
+                } catch (recErr) {
+                    console.warn("Failed to fetch recommendations:", recErr);
                 }
 
             } catch (err) {
@@ -228,21 +239,16 @@ function VideoDetail() {
             {/* Sidebar / Recommended Videos */}
             <div className="lg:w-80 w-full lg:mt-0 mt-6">
                 <h3 className="text-lg font-semibold mb-4">Up Next</h3>
-                <div className="space-y-4">
-                    <div className="text-gray-400 text-sm">
-                        Recommendations coming soon...
-                    </div>
-                    {/* Placeholder for recommended videos */}
-                    <div className="bg-gray-800 rounded-lg p-4 animate-pulse">
-                        <div className="h-40 bg-gray-700 rounded mb-3"></div>
-                        <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                        <div className="h-3 bg-gray-700 rounded w-1/2"></div>
-                    </div>
-                    <div className="bg-gray-800 rounded-lg p-4 animate-pulse">
-                        <div className="h-40 bg-gray-700 rounded mb-3"></div>
-                        <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-                        <div className="h-3 bg-gray-700 rounded w-1/2"></div>
-                    </div>
+                <div className="flex flex-col gap-3">
+                    {recommendations.length > 0 ? (
+                        recommendations.map(video => (
+                            <VideoListCard key={video._id} video={video} />
+                        ))
+                    ) : (
+                        <div className="text-gray-400 text-sm">
+                            No recommendations available.
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
