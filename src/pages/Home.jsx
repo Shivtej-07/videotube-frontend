@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import VideoCard from '../components/VideoCard';
+import VideoCardSkeleton from '../components/VideoCardSkeleton';
 
 function Home() {
     const [videos, setVideos] = useState([]);
@@ -50,8 +51,12 @@ function Home() {
     }, []);
 
     if (loading) return (
-        <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
+        <div className="sm:px-4 lg:px-6 pb-20 sm:pb-6 pt-24">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-4 sm:gap-4 md:gap-6">
+                {[...Array(8)].map((_, i) => (
+                    <VideoCardSkeleton key={i} />
+                ))}
+            </div>
         </div>
     );
 
