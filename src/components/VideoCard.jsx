@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function VideoCard({ video }) {
+    const [isHovered, setIsHovered] = useState(false);
     const formatDuration = (seconds) => {
         if (!seconds) return "0:00";
         const mins = Math.floor(seconds / 60);
@@ -39,12 +40,27 @@ function VideoCard({ video }) {
             to={`/video/${video._id}`}
             className="group block no-underline mb-4 sm:mb-0"
         >
-            <div className="relative aspect-video overflow-hidden sm:rounded-xl bg-gray-800 mb-3">
-                <img
-                    src={video.thumbnail}
-                    alt={video.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+            <div
+                className="relative aspect-video overflow-hidden sm:rounded-xl bg-gray-900 mb-3"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                {isHovered ? (
+                    <video
+                        src={video.videoFile}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full h-full object-cover"
+                    />
+                ) : (
+                    <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                )}
                 <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-medium px-1.5 py-1 rounded">
                     {formatDuration(video.duration)}
                 </span>
