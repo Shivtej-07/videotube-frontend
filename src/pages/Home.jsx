@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import VideoCard from '../components/VideoCard';
+import { Video, RotateCcw, Loader2, Sparkles } from 'lucide-react';
 
 function Home() {
     const [videos, setVideos] = useState([]);
@@ -16,7 +17,6 @@ function Home() {
         const fetchVideos = async () => {
             try {
                 const response = await api.get('/videos');
-                console.log("Videos response:", response);
                 setVideos(response.data.data?.videos || []);
             } catch (err) {
                 console.error("Failed to fetch videos:", err);
@@ -29,149 +29,91 @@ function Home() {
         fetchVideos();
     }, []);
 
-    // Handle horizontal scroll for categories on mobile
-    useEffect(() => {
-        if (categoriesRef.current) {
-            const scrollContainer = categoriesRef.current;
-
-            const handleWheel = (e) => {
-                if (window.innerWidth <= 768) { // Only on mobile
-                    e.preventDefault();
-                    scrollContainer.scrollLeft += e.deltaY;
-                }
-            };
-
-            scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
-
-            return () => {
-                scrollContainer.removeEventListener('wheel', handleWheel);
-            };
-        }
-    }, []);
+    const filteredVideos = selectedCategory === 'All'
+        ? videos
+        : videos.filter((v) =>
+            v.title?.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+            v.description?.toLowerCase().includes(selectedCategory.toLowerCase())
+        );
 
     if (loading) return (
-        <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
+        <div className="flex flex-col justify-center items-center min-h-[60vh] gap-3">
+            <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
+            <p className="text-sm font-medium text-zinc-400">Loading videos...</p>
         </div>
     );
 
     if (error) return (
-        <div className="text-center mt-8 px-4">
-            <div className="text-red-500 text-lg mb-4">{error}</div>
+        <div className="text-center mt-12 px-4">
+            <div className="text-red-400 text-lg font-semibold mb-4">{error}</div>
             <button
                 onClick={() => window.location.reload()}
-                className="w-full max-w-xs px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors active:scale-95"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-full text-sm font-semibold transition-all shadow-lg shadow-red-600/20 active:scale-95"
             >
-                Retry
+                <RotateCcw className="w-4 h-4" />
+                <span>Retry Connection</span>
             </button>
         </div>
     );
 
     return (
-        <div className="px-3 sm:px-4 lg:px-6 pb-20 sm:pb-6">
-            {/* Mobile Header */}
-            <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm pt-3 pb-2 mb-4">
-                <div className="flex justify-between items-center mb-3">
-                    <h1 className="text-xl font-bold">VideoStream</h1>
-                    <Link
-                        to="/publish"
-                        className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors active:scale-95"
-                    >
-                        Upload
-                    </Link>
-                </div>
-
-                {/* Categories Filter - Mobile Optimized */}
+        <div className="pb-8">
+            {/* Header / Category Chips */}
+            <div className="sticky top-16 z-20 bg-zinc-950/90 backdrop-blur-md pt-2 pb-3 mb-6 border-b border-zinc-800/40">
                 <div className="relative">
                     <div
                         ref={categoriesRef}
-                        className="flex gap-2 pb-3 overflow-x-auto scrollbar-hide scroll-smooth"
-                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth py-1 px-1"
                     >
-                        {categories.map((category) => (
-                            <button
-                                key={category}
-                                onClick={() => setSelectedCategory(category)}
-                                className={`px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all duration-200 active:scale-95 ${selectedCategory === category
-                                        ? 'bg-white text-black'
-                                        : 'bg-gray-900 hover:bg-gray-800 text-gray-300'
+                        {categories.map((category) => {
+                            const active = selectedCategory === category;
+                            return (
+                                <button
+                                    key={category}
+                                    onClick={() => setSelectedCategory(category)}
+                                    className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-200 active:scale-95 ${
+                                        active
+                                            ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-600/30'
+                                            : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800/80 hover:border-zinc-700'
                                     }`}
-                            >
-                                {category}
-                            </button>
-                        ))}
+                                >
+                                    {category}
+                                </button>
+                            );
+                        })}
                     </div>
-
-                    {/* Gradient fade on mobile */}
-                    <div className="absolute right-0 top-0 bottom-3 w-6 bg-gradient-to-l from-black to-transparent pointer-events-none"></div>
                 </div>
             </div>
 
-            {/* Videos Grid - Mobile Optimized */}
-            {videos.length === 0 ? (
-                <div className="text-center py-16 px-4">
-                    <div className="text-6xl mb-6">📹</div>
-                    <h3 className="text-lg font-semibold mb-3">No videos found</h3>
-                    <p className="text-gray-400 mb-6">Be the first to upload a video!</p>
+            {/* Video Feed Grid */}
+            {filteredVideos.length === 0 ? (
+                <div className="text-center py-20 px-4 max-w-md mx-auto">
+                    <div className="w-16 h-16 rounded-3xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-4 text-red-500 shadow-xl">
+                        <Video className="w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold text-zinc-100 mb-2">No videos found</h3>
+                    <p className="text-xs sm:text-sm text-zinc-400 mb-6">
+                        {selectedCategory !== 'All'
+                            ? `No videos match category "${selectedCategory}".`
+                            : "Be the first creator to upload a video on VideoTube!"}
+                    </p>
                     <Link
                         to="/publish"
-                        className="inline-block w-full max-w-xs px-6 py-3.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors active:scale-95"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-full text-sm font-semibold shadow-lg shadow-red-600/20 transition-all active:scale-95 no-underline"
                     >
-                        Upload Video
+                        <Sparkles className="w-4 h-4" />
+                        <span>Upload Video</span>
                     </Link>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-                    {videos.map(video => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                    {filteredVideos.map((video) => (
                         <VideoCard key={video._id} video={video} />
                     ))}
                 </div>
             )}
-
-            {/* Load More Button */}
-            {videos.length > 0 && (
-                <div className="text-center mt-10 px-4">
-                    <button
-                        className="w-full max-w-xs px-6 py-3.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors active:scale-95"
-                        onClick={() => console.log('Load more videos')}
-                    >
-                        Load More Videos
-                    </button>
-                </div>
-            )}
-
-            {/* Mobile Bottom Navigation (Optional) */}
-            <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 py-2 px-4 flex justify-around items-center sm:hidden z-20">
-                <Link to="/" className="flex flex-col items-center text-red-500">
-                    <span className="text-2xl">🏠</span>
-                    <span className="text-xs mt-1">Home</span>
-                </Link>
-                <Link to="/explore" className="flex flex-col items-center text-gray-400">
-                    <span className="text-2xl">🔍</span>
-                    <span className="text-xs mt-1">Explore</span>
-                </Link>
-                <Link to="/subscriptions" className="flex flex-col items-center text-gray-400">
-                    <span className="text-2xl">📺</span>
-                    <span className="text-xs mt-1">Subs</span>
-                </Link>
-                <Link to="/library" className="flex flex-col items-center text-gray-400">
-                    <span className="text-2xl">📚</span>
-                    <span className="text-xs mt-1">Library</span>
-                </Link>
-            </div>
-
-            {/* Add custom scrollbar hide for mobile */}
-            <style jsx>{`
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-            `}</style>
         </div>
     );
 }
 
-export default Home;
+export default Home;

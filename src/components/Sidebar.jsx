@@ -1,217 +1,202 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import {
+    Home,
+    Zap,
+    Flame,
+    Tv,
+    Folder,
+    History,
+    ListVideo,
+    ThumbsUp,
+    Clock,
+    Download,
+    UserCheck,
+    Video,
+    Settings,
+    Shield,
+    ChevronLeft,
+    ChevronRight,
+    X,
+} from 'lucide-react';
 
-function Sidebar() {
+function Sidebar({ isCollapsed, isMobileOpen, onCloseMobile, onToggleCollapse }) {
     const { user } = useAuth();
     const location = useLocation();
-    const [collapsed, setCollapsed] = useState(false);
 
-    // Check if the current route is active
-    const isActive = (path) => {
-        return location.pathname === path;
-    };
+    const isActive = (path) => location.pathname === path;
 
-    const sidebarItems = [
-        { path: '/', icon: '🏠', label: 'Home' },
-        { path: '/shorts', icon: '⚡', label: 'Shorts' },
-        { path: '/trending', icon: '🔥', label: 'Trending' },
-        { path: '/subscriptions', icon: '📺', label: 'Subscriptions' },
-        { path: '/library', icon: '📚', label: 'Library' },
-        { path: '/history', icon: '⏳', label: 'History' },
-        { path: '/playlists', icon: '📂', label: 'Playlists' },
-        { path: '/liked', icon: '👍', label: 'Liked Videos' },
-        { path: '/watch-later', icon: '⏱️', label: 'Watch Later' },
-        { path: '/downloads', icon: '⬇️', label: 'Downloads' },
+    const mainItems = [
+        { path: '/', icon: Home, label: 'Home' },
+        { path: '/shorts', icon: Zap, label: 'Shorts' },
+        { path: '/trending', icon: Flame, label: 'Trending' },
+        { path: '/subscriptions', icon: Tv, label: 'Subscriptions' },
+        { path: '/library', icon: Folder, label: 'Library' },
+        { path: '/history', icon: History, label: 'History' },
+        { path: '/playlists', icon: ListVideo, label: 'Playlists' },
+        { path: '/liked', icon: ThumbsUp, label: 'Liked Videos' },
+        { path: '/watch-later', icon: Clock, label: 'Watch Later' },
+        { path: '/downloads', icon: Download, label: 'Downloads' },
     ];
 
     const userItems = [
-        { path: '/your-channel', icon: '🎬', label: 'Your Channel' },
-        { path: '/studio', icon: '🎥', label: 'Studio' },
-        { path: '/settings', icon: '⚙️', label: 'Settings' },
+        { path: '/studio', icon: Video, label: 'Studio' },
+        { path: '/settings', icon: Settings, label: 'Settings' },
     ];
 
-    const subscriptionItems = [
-        { name: 'Tech With Tim', avatar: 'https://via.placeholder.com/24', live: false },
-        { name: 'Web Dev Simplified', avatar: 'https://via.placeholder.com/24', live: false },
-        { name: 'Fireship', avatar: 'https://via.placeholder.com/24', live: true },
-        { name: 'Traversy Media', avatar: 'https://via.placeholder.com/24', live: false },
-        { name: 'Programming with Mosh', avatar: 'https://via.placeholder.com/24', live: false },
-    ];
+    // Responsive class logic
+    const desktopClasses = `fixed left-0 top-16 h-[calc(100vh-4rem)] bg-zinc-950 border-r border-zinc-800/70 overflow-y-auto transition-all duration-300 z-40 hidden md:block ${
+        isCollapsed ? 'w-18' : 'w-64'
+    }`;
 
-    if (collapsed) {
-        return (
-            <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-16 bg-gray-900 border-r border-gray-800 overflow-y-auto py-4">
-                <button
-                    onClick={() => setCollapsed(false)}
-                    className="w-full flex justify-center py-3 hover:bg-gray-800 transition-colors"
-                    aria-label="Expand sidebar"
+    const mobileClasses = `fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-zinc-950 border-r border-zinc-800/80 overflow-y-auto z-50 md:hidden transition-transform duration-300 shadow-2xl ${
+        isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+    }`;
+
+    // Helper to render links
+    const renderLink = (item, isMini = false) => {
+        const IconComponent = item.icon;
+        const active = isActive(item.path);
+
+        if (isMini) {
+            return (
+                <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex flex-col items-center py-3.5 px-1 hover:bg-zinc-800/60 transition-colors group relative ${
+                        active ? 'text-red-500 font-semibold' : 'text-zinc-400 hover:text-zinc-100'
+                    }`}
+                    title={item.label}
                 >
-                    <span className="text-2xl">→</span>
-                </button>
+                    <IconComponent className={`w-5 h-5 ${active ? 'stroke-[2.5px]' : 'stroke-2'}`} />
+                    <span className="text-[10px] mt-1.5 truncate max-w-full text-center tracking-tight">
+                        {item.label}
+                    </span>
+                    {active && (
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-red-500 rounded-r-full" />
+                    )}
+                </Link>
+            );
+        }
 
-                {sidebarItems.map((item) => (
-                    <Link
-                        key={item.path}
-                        to={item.path}
-                        className={`flex flex-col items-center py-3 hover:bg-gray-800 transition-colors ${isActive(item.path) ? 'bg-gray-800 text-white' : 'text-gray-300'
-                            }`}
-                        title={item.label}
-                    >
-                        <span className="text-xl">{item.icon}</span>
-                        <span className="text-xs mt-1 truncate w-full text-center">{item.label}</span>
-                    </Link>
-                ))}
-            </aside>
+        return (
+            <Link
+                key={item.path}
+                to={item.path}
+                onClick={onCloseMobile}
+                className={`flex items-center px-4 py-3 rounded-xl mx-2 my-0.5 text-sm font-medium transition-all duration-200 group ${
+                    active
+                        ? 'bg-red-500/10 text-red-500 font-semibold'
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60'
+                }`}
+            >
+                <IconComponent
+                    className={`w-5 h-5 mr-4 transition-transform duration-200 group-hover:scale-110 ${
+                        active ? 'text-red-500 stroke-[2.5px]' : 'text-zinc-400 group-hover:text-zinc-200'
+                    }`}
+                />
+                <span className="truncate">{item.label}</span>
+            </Link>
         );
-    }
+    };
 
     return (
-        <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-gray-900 border-r border-gray-800 overflow-y-auto">
-            {/* Collapse Button */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
-                <span className="text-gray-300 font-medium">Menu</span>
-                <button
-                    onClick={() => setCollapsed(true)}
-                    className="p-1 hover:bg-gray-800 rounded transition-colors"
-                    aria-label="Collapse sidebar"
-                >
-                    <span className="text-xl">←</span>
-                </button>
-            </div>
-
-            {/* Main Navigation */}
-            <div className="py-2">
-                {sidebarItems.map((item) => (
-                    <Link
-                        key={item.path}
-                        to={item.path}
-                        className={`flex items-center px-4 py-3 hover:bg-gray-800 transition-colors ${isActive(item.path)
-                            ? 'bg-gray-800 text-white border-l-4 border-red-600'
-                            : 'text-gray-300'
-                            }`}
+        <>
+            {/* Desktop Sidebar */}
+            <aside className={desktopClasses}>
+                {/* Desktop Collapse Toggle */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800/60">
+                    {!isCollapsed && <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Navigation</span>}
+                    <button
+                        onClick={onToggleCollapse}
+                        className="p-1.5 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 rounded-lg transition-colors ml-auto"
+                        aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                     >
-                        <span className="text-xl w-8 mr-4">{item.icon}</span>
-                        <span className="text-sm font-medium">{item.label}</span>
-                    </Link>
-                ))}
-            </div>
+                        {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+                    </button>
+                </div>
 
-            {/* User Section */}
-            {user && (
-                <>
-                    <div className="px-4 py-3 border-t border-gray-800">
-                        <h3 className="text-xs uppercase text-gray-500 font-semibold tracking-wider mb-2">
+                {/* Main Navigation */}
+                <div className="py-2">
+                    {mainItems.map((item) => renderLink(item, isCollapsed))}
+                </div>
+
+                {/* User Section */}
+                {!isCollapsed && user && (
+                    <div className="pt-3 mt-3 border-t border-zinc-800/60">
+                        <h3 className="px-6 pb-2 text-[11px] uppercase text-zinc-500 font-bold tracking-wider">
+                            Studio & Account
+                        </h3>
+                        {userItems.map((item) => renderLink(item, false))}
+                    </div>
+                )}
+
+                {/* Admin Section */}
+                {!isCollapsed && user?.role === 'admin' && (
+                    <div className="pt-3 mt-3 border-t border-zinc-800/60">
+                        <h3 className="px-6 pb-2 text-[11px] uppercase text-zinc-500 font-bold tracking-wider text-amber-500">
+                            Admin Moderation
+                        </h3>
+                        <Link
+                            to="/admin"
+                            onClick={onCloseMobile}
+                            className={`flex items-center px-4 py-3 rounded-xl mx-2 text-sm font-medium transition-colors ${
+                                isActive('/admin')
+                                    ? 'bg-amber-500/10 text-amber-500 font-semibold'
+                                    : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60'
+                            }`}
+                        >
+                            <Shield className="w-5 h-5 mr-4 text-amber-500" />
+                            <span>Admin Dashboard</span>
+                        </Link>
+                    </div>
+                )}
+            </aside>
+
+            {/* Mobile Sliding Drawer Sidebar */}
+            <aside className={mobileClasses}>
+                <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+                    <span className="text-sm font-bold text-zinc-100">Menu</span>
+                    <button
+                        onClick={onCloseMobile}
+                        className="p-1.5 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 rounded-full transition-colors"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                <div className="py-2">
+                    {mainItems.map((item) => renderLink(item, false))}
+                </div>
+
+                {user && (
+                    <div className="pt-3 mt-3 border-t border-zinc-800/60">
+                        <h3 className="px-6 pb-2 text-[11px] uppercase text-zinc-500 font-bold tracking-wider">
                             You
                         </h3>
-                        {userItems.map((item) => (
-                            <Link
-                                key={item.path}
-                                to={item.path}
-                                className={`flex items-center px-4 py-3 hover:bg-gray-800 transition-colors ${isActive(item.path) ? 'bg-gray-800 text-white' : 'text-gray-300'
-                                    }`}
-                            >
-                                <span className="text-xl w-8 mr-4">{item.icon}</span>
-                                <span className="text-sm font-medium">{item.label}</span>
-                            </Link>
-                        ))}
+                        {userItems.map((item) => renderLink(item, false))}
                     </div>
+                )}
 
-                    {/* Subscriptions Section */}
-                    <div className="px-4 py-3 border-t border-gray-800">
-                        <h3 className="text-xs uppercase text-gray-500 font-semibold tracking-wider mb-2">
-                            Subscriptions
+                {user?.role === 'admin' && (
+                    <div className="pt-3 mt-3 border-t border-zinc-800/60">
+                        <h3 className="px-6 pb-2 text-[11px] uppercase text-zinc-500 font-bold tracking-wider text-amber-500">
+                            Admin
                         </h3>
-                        {subscriptionItems.map((channel) => (
-                            <Link
-                                key={channel.name}
-                                to={`/channel/${channel.name.toLowerCase().replace(/\s+/g, '-')}`}
-                                className="flex items-center px-4 py-2 hover:bg-gray-800 transition-colors group"
-                            >
-                                <div className="relative">
-                                    <img
-                                        src={channel.avatar}
-                                        alt={channel.name}
-                                        className="w-6 h-6 rounded-full mr-3"
-                                    />
-                                    {channel.live && (
-                                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                                    )}
-                                </div>
-                                <span className="text-sm text-gray-300 group-hover:text-white truncate">
-                                    {channel.name}
-                                </span>
-                                {channel.live && (
-                                    <span className="ml-auto px-1.5 py-0.5 text-xs bg-red-600 text-white rounded-sm">
-                                        LIVE
-                                    </span>
-                                )}
-                            </Link>
-                        ))}
-                        <button className="flex items-center px-4 py-2 text-blue-400 hover:text-blue-300 text-sm font-medium w-full">
-                            <span className="mr-3">🔽</span>
-                            Show more
-                        </button>
+                        <Link
+                            to="/admin"
+                            onClick={onCloseMobile}
+                            className="flex items-center px-4 py-3 rounded-xl mx-2 text-sm font-medium text-amber-500 hover:bg-amber-500/10 transition-colors"
+                        >
+                            <Shield className="w-5 h-5 mr-4" />
+                            <span>Admin Dashboard</span>
+                        </Link>
                     </div>
-                </>
-            )}
-
-            {/* Admin Section */}
-            {user?.role === 'admin' && (
-                <div className="px-4 py-3 border-t border-gray-800">
-                    <h3 className="text-xs uppercase text-gray-500 font-semibold tracking-wider mb-2">
-                        Admin
-                    </h3>
-                    <Link
-                        to="/admin"
-                        className={`flex items-center px-4 py-3 hover:bg-gray-800 transition-colors ${isActive('/admin')
-                            ? 'bg-gray-800 text-white border-l-4 border-red-600'
-                            : 'text-gray-300'
-                            }`}
-                    >
-                        <span className="text-xl w-8 mr-4">🛡️</span>
-                        <span className="text-sm font-medium">Admin Dashboard</span>
-                    </Link>
-                    <Link
-                        to="/admin/users"
-                        className="flex items-center px-4 py-2 hover:bg-gray-800 transition-colors text-gray-300 pl-12"
-                    >
-                        <span className="text-sm font-medium">User Management</span>
-                    </Link>
-                    <Link
-                        to="/admin/videos"
-                        className="flex items-center px-4 py-2 hover:bg-gray-800 transition-colors text-gray-300 pl-12"
-                    >
-                        <span className="text-sm font-medium">Video Moderation</span>
-                    </Link>
-                    <Link
-                        to="/admin/analytics"
-                        className="flex items-center px-4 py-2 hover:bg-gray-800 transition-colors text-gray-300 pl-12"
-                    >
-                        <span className="text-sm font-medium">Analytics</span>
-                    </Link>
-                </div>
-            )}
-
-            {/* Footer Links */}
-            <div className="px-4 py-3 border-t border-gray-800">
-                <div className="text-xs text-gray-500 space-y-2">
-                    <div className="flex flex-wrap gap-2">
-                        <a href="#" className="hover:text-gray-400">About</a>
-                        <a href="#" className="hover:text-gray-400">Press</a>
-                        <a href="#" className="hover:text-gray-400">Copyright</a>
-                        <a href="#" className="hover:text-gray-400">Contact</a>
-                        <a href="#" className="hover:text-gray-400">Creators</a>
-                        <a href="#" className="hover:text-gray-400">Advertise</a>
-                        <a href="#" className="hover:text-gray-400">Developers</a>
-                    </div>
-                    <div className="text-xs text-gray-600 mt-4">
-                        © 2024 VideoTube
-                    </div>
-                </div>
-            </div>
-        </aside>
+                )}
+            </aside>
+        </>
     );
 }
 
-export default Sidebar;
+export default Sidebar;
