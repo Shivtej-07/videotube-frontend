@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import { Home, Flame, Zap, Tv, FolderLibrary, Folder, User } from 'lucide-react';
+import { Home, Flame, Zap, Tv, Folder, User } from 'lucide-react';
 
 function Layout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
